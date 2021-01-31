@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Currency Convertor App</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <nav class="navigation layoutCompose">
+      <a href="#page-1" class="link"><img src="./images/zhLogo.svg" /></a>
+      <a href="#page-1" class="link">Converter</a>
+      <a href="#page-2" class="link">Foreign Exchange Rates</a>
+    </nav>
+
+    <main class="app">
+      <div class="page" id="page-2">
+        <div class="layout layoutCompose">
+          <div class="container">
+            <div class="date2"></div>
+            <div class="header_currencies">
+              <h4>Currency</h4>
+              <h4>Rate</h4>
+              <h4>Favorite currencies</h4>
+            </div>
+            <ul class="currencies" id="currencies_list"></ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="page" id="page-1">
+        <div class="layout layoutCompose">
+          <div class="container2">
+            <div class="date"></div>
+            <h1>Converter</h1>
+            <div class="convert_cover">
+              <span class="title_from">From</span>
+              <input class="input1" placeholder="0.000" />
+              <select class="input-select-css">
+                <option disabled selected>Currency</option>
+              </select>
+            </div>
+            <div class="convert_cover">
+              <span class="title_to">To</span>
+              <input class="input2" placeholder="0.000" />
+              <select class="output-select-css">
+                <option disabled selected>Currency</option>
+              </select>
+            </div>
+            <a href="#page-2" class="link"
+              ><button class="add-currency-btn">
+                FOREIGN EXCHANGE RATES
+              </button></a
+            >
+          </div>
+        </div>
+      </div>
+    </main>
+    <script src="main.js"></script>
+  </body>
+</html>
