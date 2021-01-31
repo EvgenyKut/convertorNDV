@@ -84,18 +84,19 @@ ul.currencies li:last-child {
 
 .info {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   width: 70%;
 }
 
 .header_currencies {
   display: flex;
-  margin-left: 250px;
-  justify-content: space-around;
+  margin-left: 270px;
+  justify-content: space-between;
+  margin-right: 80px;
 }
 
 .close {
-  margin-left: 100px;
+  margin-right: 50px;
 }
 
 .info {

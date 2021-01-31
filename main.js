@@ -1,9 +1,9 @@
 const API_URL = "https://api.exchangeratesapi.io/latest";
 const addCurrencyList = document.querySelector(".currencies");
-const select1 = document.querySelector(".input-select-css");
-const select2 = document.querySelector(".output-select-css");
-const input1 = document.querySelector(".input1");
-const input2 = document.querySelector(".input2");
+const selectFrom = document.querySelector(".input-select-css");
+const selectTo = document.querySelector(".output-select-css");
+const inputFrom = document.querySelector(".inputFrom");
+const inputTo = document.querySelector(".inputTo");
 const date = document.querySelector(".date");
 const date2 = document.querySelector(".date2");
 let currencies = [
@@ -273,114 +273,112 @@ let currencies = [
     symbol: "&#9674",
   },
 ];
-let currenciesStart = currencies;
 
+const currenciesStart = currencies;
 let html;
 
 async function convertor() {
   const res = await fetch(API_URL);
-  const data = await res.json();
-  const rates = data.rates;
-  const arrKeys = Object.keys(data.rates);
-  arrKeys.map((item) => {
-    return (html += `<option value=${item}>${item}</option>`);
-  });
-  select1.innerHTML = html;
-  select2.innerHTML = html;
-  //ошибку поймать1!
-  date.innerHTML = data.date;
-  date2.innerHTML = data.date;
+  if (!res.ok) {
+    alert("Ошибка HTTP: " + res.status);
+  } else {
+    const data = await res.json();
+    const rates = data.rates;
+    const arrKeys = Object.keys(data.rates);
+    arrKeys.map((item) => {
+      return (html += `<option value=${item}>${item}</option>`);
+    });
+    selectFrom.innerHTML = html;
+    selectTo.innerHTML = html;
 
-  currencies.map((item) => {
-    if (item.abbreviation === "EUR") {
-      return (item.rate = 1);
-    } else {
-      return (item.rate = rates[item.abbreviation]);
+    date.innerHTML = data.date;
+    date2.innerHTML = data.date;
+
+    currencies.map((item) => {
+      if (item.abbreviation === "EUR") {
+        return (item.rate = 1);
+      } else {
+        return (item.rate = rates[item.abbreviation]);
+      }
+    });
+
+    inputFrom.addEventListener("keyup", () => {
+      inputTo.value = (
+        (inputFrom.value * rates[selectTo.value]) /
+        rates[selectFrom.value]
+      ).toFixed(4);
+    });
+
+    inputTo.addEventListener("keyup", () => {
+      inputFrom.value = (
+        (inputTo.value * rates[selectFrom.value]) /
+        rates[selectTo.value]
+      ).toFixed(4);
+    });
+
+    selectFrom.addEventListener("change", () => {
+      inputTo.value = (
+        (inputFrom.value * rates[selectTo.value]) /
+        rates[selectFrom.value]
+      ).toFixed(4);
+    });
+
+    selectTo.addEventListener("change", () => {
+      inputFrom.value = (
+        (inputTo.value * rates[selectFrom.value]) /
+        rates[selectTo.value]
+      ).toFixed(4);
+    });
+
+    let localStorageCurrencies = localStorage.getItem("key3");
+    currencies = JSON.parse(localStorageCurrencies);
+    if (currencies === null) {
+      currencies = currenciesStart;
     }
-  });
 
-  //   function convert(i, j) {
-  //     input[i].value =
-  //       (input[j].value * rates[select[j].value]) / rates[select[i].value];
-  //   }
-
-  //   input[1].addEventListener("keyup", () => convert(1, 0));
-
-  input1.addEventListener("keyup", () => {
-    input2.value = (
-      (input1.value * rates[select2.value]) /
-      rates[select1.value]
-    ).toFixed(4);
-  });
-
-  input2.addEventListener("keyup", () => {
-    input1.value = (
-      (input2.value * rates[select1.value]) /
-      rates[select2.value]
-    ).toFixed(4);
-  });
-
-  select1.addEventListener("change", () => {
-    input2.value = (
-      (input1.value * rates[select2.value]) /
-      rates[select1.value]
-    ).toFixed(4);
-  });
-
-  select2.addEventListener("change", () => {
-    input1.value = (
-      (input2.value * rates[select1.value]) /
-      rates[select2.value]
-    ).toFixed(4);
-  });
-
-  let localStorageCurrencies = localStorage.getItem("key3");
-  currencies = JSON.parse(localStorageCurrencies);
-  if (currencies === null) {
-    currencies = currenciesStart;
-  }
-
-  function populateAddCurrencyList() {
-    for (i = 0; i < currencies.length; i++) {
-      addCurrencyList.insertAdjacentHTML(
-        "beforeend",
-        `<li class="currency" id=${currencies[i].abbreviation}>
-        <img src=${currencies[i].flagURL} class="flag"/>
+    function populateAddCurrencyList() {
+      currencies.forEach((item) => {
+        addCurrencyList.insertAdjacentHTML(
+          "beforeend",
+          `<li class="currency" id=${item.abbreviation}>
+        <img src=${item.flagURL} class="flag"/>
         <div class="info">
-            <p class="currency-name"> ${currencies[i].abbreviation} </p>
-            <p class="base-currency-rate">1 EUR = ${currencies[i].rate} ${currencies[i].abbreviation}</p>
-            <span class="close">${currencies[i].symbol}</span>
+            <p class="currency-name"> ${item.abbreviation} </p>
+            <p class="base-currency-rate">1 EUR = ${item.rate} ${item.abbreviation}</p>
+            <span class="close">${item.symbol}</span>
          </div>
     </li>`
-      );
-    }
-  }
-  populateAddCurrencyList();
-
-  addCurrencyList.addEventListener("click", addCurrencyListClick);
-
-  function addCurrencyListClick(event) {
-    const clickedListItem = event.target.closest("li");
-    const index = currencies.findIndex(
-      (item) => item.abbreviation == clickedListItem.id
-    );
-    const topItem = currencies[index];
-    if (topItem["symbol"] === "&#10004") {
-      topItem["symbol"] = "&#9674";
-      currencies.splice(index, 1);
-      currencies.push(topItem);
-    } else {
-      topItem["symbol"] = "&#10004";
-      currencies.splice(index, 1);
-      currencies.unshift(topItem);
+        );
+      });
     }
 
-    let currenciesNode = document.getElementById("currencies_list");
-    while (currenciesNode.firstChild) {
-      currenciesNode.removeChild(currenciesNode.firstChild);
-    }
     populateAddCurrencyList();
-    localStorage.setItem("key3", JSON.stringify(currencies));
+
+    addCurrencyList.addEventListener("click", addCurrencyListClick);
+
+    function addCurrencyListClick(event) {
+      const clickedListItem = event.target.closest("li");
+      const index = currencies.findIndex(
+        (item) => item.abbreviation == clickedListItem.id
+      );
+      const topItem = currencies[index];
+      if (topItem["symbol"] === "&#10004") {
+        topItem["symbol"] = "&#9674";
+        currencies.splice(index, 1);
+        currencies.push(topItem);
+      } else {
+        topItem["symbol"] = "&#10004";
+        currencies.splice(index, 1);
+        currencies.unshift(topItem);
+      }
+
+      let currenciesNode = document.getElementById("currencies_list");
+      while (currenciesNode.firstChild) {
+        currenciesNode.removeChild(currenciesNode.firstChild);
+      }
+      populateAddCurrencyList();
+      localStorage.setItem("key3", JSON.stringify(currencies));
+    }
   }
 }
 
