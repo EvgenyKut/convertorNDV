@@ -273,6 +273,7 @@ let currencies = [
     symbol: "&#9674",
   },
 ];
+let currenciesStart = currencies;
 
 let html;
 
@@ -335,6 +336,9 @@ async function convertor() {
 
   let localStorageCurrencies = localStorage.getItem("key3");
   currencies = JSON.parse(localStorageCurrencies);
+  if (currencies === null) {
+    currencies = currenciesStart;
+  }
 
   function populateAddCurrencyList() {
     for (i = 0; i < currencies.length; i++) {
@@ -375,8 +379,8 @@ async function convertor() {
     while (currenciesNode.firstChild) {
       currenciesNode.removeChild(currenciesNode.firstChild);
     }
-    localStorage.setItem("key3", JSON.stringify(currencies));
     populateAddCurrencyList();
+    localStorage.setItem("key3", JSON.stringify(currencies));
   }
 }
 
