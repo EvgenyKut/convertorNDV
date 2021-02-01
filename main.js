@@ -280,7 +280,7 @@ let html;
 async function convertor() {
   const res = await fetch(API_URL);
   if (!res.ok) {
-    alert("Ошибка HTTP: " + res.status);
+    alert("HTTP error. The server responded with a status of  " + res.status);
   } else {
     const data = await res.json();
     const rates = data.rates;
